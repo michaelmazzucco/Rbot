@@ -20,23 +20,157 @@ class pilotControl(object):
         self._Header2 =  0xFF
         self._Buttons1 = 0x00
         self._Buttons2 = 0x00       
-        self._joystick = [511, 511, 511, 511]      
-        
+        self._joystick = [511, 511, 511, 511]  
 
-    def setButtons1(self,val):
+        self._Fire = 0
+        self._Strafe = 0
+        self._Rate1 = 0
+        self._Rate2 = 0
+        self._Rate3 = 0
+        self._Rate4 = 0
+        self._Safe = 0
+        self._Arm = 0
+        
+    
+    def MoveFwd(self,val):
         self.lock.acquire()
-        self._Buttons1 = val
+        self._unset_Strafe()
+        self._joystick[2] = self._clamp(val,0,1023)  
         self.lock.release()
         
-    def setButtons2(self,val):
+    def MoveBack(self,val):
         self.lock.acquire()
-        self._Buttons2 = val
+        self._unset_Strafe()
+        self._joystick[2] = self._clamp(val,0,1023)  
+        print(self._joystick[2])
         self.lock.release()
         
-    def setJoysticks(self, val1, val2, val3, val4):
+    def MoveTurnRight(self,val):
         self.lock.acquire()
-        self._joystick = [self._clamp(val1,0,1023), self._clamp(val2,0,1023), self._clamp(val3,0,1023), self._clamp(val4,0,1023)]
+        self._unset_Strafe()
+        self._joystick[3] = self._clamp(val,0,1023)          
         self.lock.release()
+        
+    def MoveTurnLeft(self,val):
+        self.lock.acquire()
+        self._unset_Strafe()
+        self._joystick[3] = self._clamp(val,0,1023)         
+        self.lock.release()
+        
+        
+# Button 1
+    def set_Safe(self):
+        self.lock.acquire()
+        self._Buttons1 |= 0x04
+        self.lock.release()
+        
+    def unset_Safe(self):
+        self.lock.acquire()
+        self._Buttons1 &= ~0x04
+        self.lock.release()
+        
+        
+    
+    def set_Arm(self):
+        self.lock.acquire()
+        self._Buttons1 |= 0x08
+        self.lock.release()
+        
+    def unset_Arm(self):
+        self.lock.acquire()
+        self._Buttons1 &= ~0x08
+        self.lock.release()
+        
+    def setTurretUp(self):
+        self.lock.acquire()
+        self._Buttons1 |= 0x10
+        self.lock.release()
+        
+    def unsetTurretUp(self):
+        self.lock.acquire()
+        self._Buttons1 &= ~0x10
+        self.lock.release()
+        
+    def setTurretLeft(self):
+        self.lock.acquire()
+        self._Buttons1 |= 0x20
+        self.lock.release()
+        
+    def unsetTurretLeft(self):
+        self.lock.acquire()
+        self._Buttons1 &= ~0x20
+        self.lock.release()
+                
+    def setTurretDown(self):
+        self.lock.acquire()
+        self._Buttons1 |= 0x40
+        self.lock.release()
+        
+    def unsetTurretDown(self):
+        self.lock.acquire()
+        self._Buttons1 &= ~0x40
+        self.lock.release()
+                
+        
+    def setTurretRight(self):
+        self.lock.acquire()
+        self._Buttons1 |= 0x80
+        self.lock.release()
+        
+    def unsetTurretRight(self):
+        self.lock.acquire()
+        self._Buttons1 &= ~0x80
+        self.lock.release()
+
+# Button 2        
+    def set_Rate1(self,val):
+        self.lock.acquire()
+        self._Buttons2 = self._Buttons2 ^ 0x01
+        self.lock.release()
+        
+    def set_Rate2(self,val):
+        self.lock.acquire()
+        self._Buttons2 = self._Buttons2 ^ 0x02
+        self.lock.release()
+        
+    def set_Rate3(self,val):
+        self.lock.acquire()
+        self._Buttons2 = self._Buttons2 ^ 0x04
+        self.lock.release()
+        
+    def set_Rate4(self,val):
+        self.lock.acquire()
+        self._Buttons2 = self._Buttons2 ^ 0x08
+        self.lock.release()        
+        
+    def set_Fire(self):
+        self.lock.acquire()
+        self._Buttons2 |= 0x20
+        self.lock.release()
+        
+    def unset_Fire(self):
+        self.lock.acquire()
+        self._Buttons2 &= ~0x20
+        self.lock.release()        
+    
+    def _set_Strafe(self):
+        self._Buttons2 |=  0x10
+        
+    def _unset_Strafe(self):
+        self._Buttons2 &= ~0x10
+        
+    def MoveStrafeLeft(self,val):
+        self.lock.acquire()
+        self._set_Strafe()
+        self._joystick[3] = self._clamp(val,0,1023)    
+        self.lock.release() 
+    
+    def MoveStrafeRight(self,val):
+        self.lock.acquire()
+        self._set_Strafe()
+        self._joystick[3] = self._clamp(val,0,1023)    
+        self.lock.release()    
+     
         
     def _clamp(self, n, smallest, largest): 
         return max(smallest, min(n, largest))

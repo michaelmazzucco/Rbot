@@ -25,7 +25,7 @@ if __name__=='__main__':
     try:
         t.start()
     except (KeyboardInterrupt, SystemExit):
-        t._stop.
+        t._stop()
         sys.exit()
 
     
